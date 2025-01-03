@@ -1,0 +1,13 @@
+<div class="bg-[#f7ebe8] py-6 mt-10">
+  <div class="container mx-auto text-center">
+    <h2 class="text-2xl font-bold text-[#4b3a2c] mb-4">Observações</h2>
+    <ul class="space-y-2">
+      <li
+        *ngFor="let observation of observations"
+        class="text-sm text-[#7d6e57]"
+      >
+        {{ observation }}
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,261 @@
+<div class="bg-[#f7f1e3] min-h-screen">
+  <!-- Header -->
+  <header class="bg-[#795548] text-white py-8 shadow-md">
+    <div class="container mx-auto text-center">
+      <h1 class="text-4xl font-extrabold tracking-tight">Gizele & Marcelo</h1>
+      <p class="text-lg mt-2 italic">Bem-vindos ao nosso Chá de Casa Nova!</p>
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <div class="relative">
+    <!-- Conteúdo principal -->
+    <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 bg-white rounded-lg shadow-lg relative">
+      <h2 class="text-3xl font-bold text-[#4b3a2c] mb-6 text-center">
+        Lista de Presentes
+      </h2>
+
+      <div class="mb-6 flex items-center justify-end">
+        <label for="sort" class="text-sm font-medium text-[#4b3a2c] mr-2">Ordenar por:</label>
+        <select
+          id="sort"
+          (change)="onSortChange($event)"
+          class="border border-gray-300 rounded py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#795548]"
+        >
+          <option value="price">Preço</option>
+          <option value="name">Ordem Alfabética</option>
+          <option value="quantity">Quantidade</option>
+        </select>
+      </div>
+
+
+      <!-- Grid de Produtos -->
+      <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        <div
+          *ngFor="let product of products"
+          style="height: 520px;"
+          class="group bg-[#f7ebe8] rounded-lg flex flex-col justify-between p-4 shadow hover:shadow-md transition"
+        >
+          <!-- Imagem do Produto -->
+          <img
+            [src]="product.image"
+            [alt]="product.name"
+            class="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-[7/8]"
+          />
+
+          <!-- Nome e Descrição -->
+          <h3 class="mt-4 text-sm font-bold text-[#4b3a2c]">{{ product.name }}</h3>
+          <p class="mt-1 text-sm text-[#7d6e57] truncate">{{ product.description }}</p>
+
+          <!-- Preço e Cotas -->
+          <p class="mt-1 text-lg font-medium text-[#4b3a2c]">
+            Preço: R$ {{ product.price }}
+          </p>
+          <p *ngIf="product.quotaValue" class="mt-1 text-sm font-medium text-[#4b3a2c]">
+            Cotas disponíveis: {{ product.totalQuotas }} de R$ {{ product.quotaValue }} cada
+          </p>
+
+          <!-- Quantidade -->
+
+
+          <!-- Botão Comprar -->
+          <div class="mt-4 flex justify-center">
+            <ng-container *ngIf="product.quantity > 0; else soldOut">
+              <button
+                (click)="buyProduct(product)"
+                class="bg-[#795548] hover:bg-[#5d4037] text-white font-semibold py-2 px-4 rounded"
+              >
+                Comprar
+              </button>
+            </ng-container>
+            <ng-template #soldOut>
+              <button
+                disabled
+                class="bg-gray-400 text-white font-semibold py-2 px-4 rounded cursor-not-allowed"
+              >
+                Esgotado
+              </button>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<!-- Modal Principal -->
+<!-- Modal Principal -->
+<div
+  *ngIf="selectedProduct"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  (click)="closeModalOnBackdropClick($event)"
+>
+  <div
+    class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="text-2xl font-bold mb-4 text-[#4b3a2c]">
+      Como você gostaria de comprar?
+    </h2>
+    <p class="mb-4 text-sm text-gray-700">
+      Produto: <span class="font-semibold">{{ selectedProduct.name }}</span>
+    </p>
+    <div class="flex flex-col gap-4">
+      <!-- Botão PIX -->
+      <button
+        (click)="showPixModal()"
+        class="bg-[#4caf50] hover:bg-[#388e3c] text-white font-semibold py-2 px-4 rounded"
+      >
+        Comprar com PIX
+      </button>
+      <!-- Botão Link -->
+      <button
+        (click)="openProductLink()"
+        class="bg-[#795548] hover:bg-[#5d4037] text-white font-semibold py-2 px-4 rounded"
+      >
+        Comprar no Link
+      </button>
+    </div>
+    <button
+      (click)="closeModal()"
+      class="mt-6 text-sm text-gray-500 hover:text-gray-800"
+    >
+      Cancelar
+    </button>
+  </div>
+</div>
+
+<!-- Modal de Confirmação de Compra -->
+<div
+  *ngIf="confirmingPurchase"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div
+    class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="text-2xl font-bold mb-4 text-[#4b3a2c]">
+      Confirmação de Compra
+    </h2>
+    <p class="text-sm text-gray-700 mb-4">
+      Você confirma a compra do produto
+      <span class="font-semibold">{{ selectedProduct.name }}</span>?
+    </p>
+
+    <div class="mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Seu Nome:</label>
+      <input
+        id="name"
+        type="text"
+        [(ngModel)]="userName"
+        class="border border-gray-300 rounded py-2 px-4 w-full"
+        placeholder="Digite seu nome"
+      />
+    </div>
+
+    <!-- Campo para selecionar o número de cotas -->
+    <div class="mb-4" *ngIf="selectedProduct.quotaValue">
+      <label for="quotas" class="block text-sm font-medium text-gray-700 mb-1">Número de Cotas:</label>
+      <input
+        id="quotas"
+        type="number"
+        [(ngModel)]="selectedQuotas"
+        [max]="selectedProduct.totalQuotas"
+        [min]="1"
+        class="border border-gray-300 rounded py-2 px-4 w-full"
+        placeholder="Digite a quantidade de cotas"
+      />
+    </div>
+
+    <div class="flex justify-between items-center">
+      <button
+        (click)="confirmPurchase()"
+        [disabled]="!userName || isLoading || (selectedProduct.quotaValue && (!selectedQuotas || selectedQuotas < 1))"
+        class="bg-[#4caf50] hover:bg-[#388e3c] text-white font-semibold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+      >
+        <span *ngIf="!isLoading">Confirmar Compra</span>
+        <span *ngIf="isLoading" class="loader ml-2"></span>
+      </button>
+      <button
+        (click)="cancelPurchase()"
+        class="bg-[#795548] hover:bg-[#5d4037] text-white font-semibold py-2 px-4 rounded"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- Modal PIX -->
+<div
+  *ngIf="showingPixModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  (click)="closePixModalOnBackdropClick($event)"
+>
+  <div
+    class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="text-2xl font-bold mb-4 text-[#4b3a2c]">Pagamento com PIX</h2>
+    <p class="text-sm text-gray-700 mb-4">
+      Use o código PIX abaixo para concluir a compra do produto:
+    </p>
+    <div class="bg-gray-100 p-4 rounded text-center">
+      <p class="text-sm font-bold text-gray-900">
+        CHAVE-PIX-12345-{{ selectedProduct?.id }}
+      </p>
+    </div>
+    <div class="mt-4">
+      <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+        Seu Nome:
+      </label>
+      <input
+        id="name"
+        type="text"
+        [(ngModel)]="userName"
+        class="border border-gray-300 rounded py-2 px-4 w-full"
+        placeholder="Digite seu nome"
+      />
+    </div>
+    <div class="mt-4" *ngIf="selectedProduct?.quotaValue">
+      <label for="quotas" class="block text-sm font-medium text-gray-700 mb-1">
+        Número de Cotas:
+      </label>
+      <input
+        id="quotas"
+        type="number"
+        [(ngModel)]="selectedQuotas"
+        [max]="selectedProduct.totalQuotas"
+        [min]="1"
+        class="border border-gray-300 rounded py-2 px-4 w-full"
+        placeholder="Digite a quantidade de cotas"
+      />
+    </div>
+    <div class="mt-4 flex justify-center">
+      <button
+        (click)="confirmPurchase('PIX')"
+        [disabled]="!userName || isLoading || (selectedProduct?.quotaValue && (!selectedQuotas || selectedQuotas < 1))"
+        class="bg-[#4caf50] hover:bg-[#388e3c] text-white font-semibold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+      >
+        <span *ngIf="!isLoading">Confirmar Compra</span>
+        <span *ngIf="isLoading" class="loader ml-2"></span>
+      </button>
+    </div>
+    <button
+      (click)="closePixModal()"
+      class="mt-6 bg-[#795548] hover:bg-[#5d4037] text-white font-semibold py-2 px-4 rounded"
+    >
+      Fechar
+    </button>
+  </div>
+</div>
+
+
+<app-observations></app-observations>
