@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ProductService {
+  // private apiUrl = 'http://localhost:3000/api/produtos';
   private apiUrl = 'https://joaobackend.vercel.app/api/produtos';
+
 
   constructor(private http: HttpClient) {}
 
