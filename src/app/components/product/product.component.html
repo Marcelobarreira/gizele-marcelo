@@ -15,18 +15,22 @@
         Lista de Presentes
       </h2>
 
-      <div class="mb-6 flex items-center justify-end">
-        <label for="sort" class="text-sm font-medium text-[#4b3a2c] mr-2">Ordenar por:</label>
+      <div class="mb-6 flex items-center justify-end space-x-2">
+        <label for="sort" class="text-sm font-medium text-[#4b3a2c]">
+          Ordenar por:
+        </label>
         <select
           id="sort"
           (change)="onSortChange($event)"
-          class="border border-gray-300 rounded py-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#795548]"
+          class="border border-gray-300 rounded-md py-2 px-4 text-sm text-[#4b3a2c] focus:outline-none focus:ring-2 focus:ring-[#795548] focus:border-[#795548] transition"
         >
           <option value="price">Preço</option>
           <option value="name">Ordem Alfabética</option>
           <option value="quantity">Quantidade</option>
         </select>
       </div>
+
+
 
 
       <!-- Grid de Produtos -->
@@ -49,7 +53,7 @@
 
           <!-- Preço e Cotas -->
           <p class="mt-1 text-lg font-medium text-[#4b3a2c]">
-            Preço: R$ {{ product.price }}
+            Preço: R$ {{ product.price }},00
           </p>
           <p *ngIf="product.quotaValue" class="mt-1 text-sm font-medium text-[#4b3a2c]">
             Cotas disponíveis: {{ product.totalQuotas }} de R$ {{ product.quotaValue }} cada

@@ -163,13 +163,16 @@ export class ProductComponent implements OnInit {
 
   sortProducts() {
     if (this.sortKey === 'price') {
-      this.sortedProducts = [...this.products].sort((a, b) => a.price - b.price);
+      // Ordena por preço (decrescente)
+      this.products = [...this.products].sort((a, b) => b.price - a.price);
     } else if (this.sortKey === 'name') {
-      this.sortedProducts = [...this.products].sort((a, b) =>
+      // Ordena por nome (crescente)
+      this.products = [...this.products].sort((a, b) =>
         a.name.localeCompare(b.name)
       );
     } else if (this.sortKey === 'quantity') {
-      this.sortedProducts = [...this.products].sort((a, b) => b.quantity - a.quantity);
+      // Ordena por quantidade (decrescente)
+      this.products = [...this.products].sort((a, b) => b.quantity - a.quantity);
     }
   }
 }
