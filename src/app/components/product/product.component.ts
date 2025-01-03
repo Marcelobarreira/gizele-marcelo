@@ -18,6 +18,8 @@ export class ProductComponent implements OnInit {
   userName: string = '';
   isLoading: boolean = false;
   selectedQuotas: number = 1;
+  pixCopied: boolean = false;
+
 
   selectedProduct: any = null;
   showingPixModal: boolean = false;
@@ -147,7 +149,17 @@ export class ProductComponent implements OnInit {
     }
   }
 
-
+  copyPixCode() {
+    const pixCode = `85988693542`;
+    navigator.clipboard.writeText(pixCode).then(() => {
+        this.pixCopied = true;
+        setTimeout(() => {
+            this.pixCopied = false;
+        }, 3000); // Oculta a mensagem após 3 segundos
+    }).catch(err => {
+        console.error('Erro ao copiar o PIX:', err);
+    });
+}
 
   cancelPurchase() {
     this.confirmingPurchase = false;

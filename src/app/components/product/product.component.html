@@ -213,11 +213,34 @@
     <p class="text-sm text-gray-700 mb-4">
       Use o código PIX abaixo para concluir a compra do produto:
     </p>
-    <div class="bg-gray-100 p-4 rounded text-center">
-      <p class="text-sm font-bold text-gray-900">
-        CHAVE-PIX-12345-{{ selectedProduct?.id }}
+    <div class="bg-gray-100 p-4 rounded text-center relative border border-gray-300">
+      <!-- Informação do titular da conta -->
+      <p class="text-xs text-gray-600 mb-2 italic">
+          Titular: <span class="font-semibold">Gizele Carneiro da Silva - Nubank</span>
       </p>
-    </div>
+
+      <!-- Chave Pix e botão de cópia -->
+      <p
+          class="text-sm font-mono font-bold text-gray-900 cursor-pointer flex justify-center items-center gap-2 hover:text-[#795548] transition"
+          (click)="copyPixCode()"
+          title="Clique para copiar"
+      >
+          CHAVE-PIX-85988693542
+          <i class="fa-regular fa-copy text-[#795548]"></i>
+      </p>
+
+      <!-- Mensagem de confirmação -->
+      <div
+          *ngIf="pixCopied"
+          class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full bg-green-500 text-white text-sm rounded px-2 py-1"
+      >
+          Copiado para a área de transferência!
+      </div>
+  </div>
+
+
+
+
     <div class="mt-4">
       <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
         Seu Nome:
