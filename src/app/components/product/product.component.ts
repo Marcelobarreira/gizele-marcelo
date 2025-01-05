@@ -59,12 +59,15 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   startAutoRefresh(): void {
-    // Atualizar a cada 30 segundos (30000 milissegundos)
-    this.productUpdateSubscription = interval(30000).subscribe(() => {
-      this.loadProducts();
-      console.log('✅ Product list updated automatically.');
-    });
-  }
+    // Evitar que o intervalo rode durante o build do Vercel
+    if (typeof window !== 'undefined') {
+        this.productUpdateSubscription = interval(30000).subscribe(() => {
+            this.loadProducts();
+            console.log('✅ Product list updated automatically.');
+        });
+    }
+}
+
 
   addProduct() {
     this.productService.addProduct(this.newProduct).subscribe(() => {
