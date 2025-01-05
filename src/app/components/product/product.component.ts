@@ -3,6 +3,7 @@ import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ObservationsComponent } from "../observations/observations.component"; // Adicionado FormsModule
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product',
@@ -19,6 +20,9 @@ export class ProductComponent implements OnInit {
   isLoading: boolean = false;
   selectedQuotas: number = 1;
   pixCopied: boolean = false;
+  private productUpdateSubscription?: Subscription;
+
+
 
 
   selectedProduct: any = null;
@@ -38,12 +42,21 @@ export class ProductComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+    this.startAutoRefresh();
   }
 
   loadProducts() {
     this.productService.getProducts().subscribe((data) => {
       this.products = data;
       this.sortProducts();
+    });
+  }
+
+  startAutoRefresh(): void {
+    // Atualizar a cada 30 segundos (30000 milissegundos)
+    this.productUpdateSubscription = interval(30000).subscribe(() => {
+      this.loadProducts();
+      console.log('✅ Product list updated automatically.');
     });
   }
 
