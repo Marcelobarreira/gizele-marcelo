@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,7 @@ import { interval, Subscription } from 'rxjs';
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit, OnDestroy {
   products: any[] = [];
   sortedProducts: any[] = [];
   sortKey: string = 'price';
@@ -43,6 +43,12 @@ export class ProductComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
     this.startAutoRefresh();
+  }
+
+  ngOnDestroy(): void {
+    if (this.productUpdateSubscription) {
+      this.productUpdateSubscription.unsubscribe();
+    }
   }
 
   loadProducts() {
