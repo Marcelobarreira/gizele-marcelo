@@ -52,21 +52,21 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   loadProducts() {
+    this.products = [];
     this.productService.getProducts().subscribe((data) => {
       this.products = data;
       this.sortProducts();
     });
-  }
+}
 
   startAutoRefresh(): void {
-    // Evitar que o intervalo rode durante o build do Vercel
     if (typeof window !== 'undefined') {
         this.productUpdateSubscription = interval(30000).subscribe(() => {
             this.loadProducts();
             console.log('✅ Product list updated automatically.');
         });
     }
-}
+  }
 
 
   addProduct() {
