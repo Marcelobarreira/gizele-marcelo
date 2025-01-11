@@ -52,12 +52,14 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   loadProducts() {
+    this.isLoading = true;
     this.products = [];
     this.productService.getProducts().subscribe((data) => {
-      this.products = data;
-      this.sortProducts();
+        this.products = data;
+        this.sortProducts();
+        this.isLoading = false;
     });
-}
+  }
 
   startAutoRefresh(): void {
     if (typeof window !== 'undefined') {
@@ -128,48 +130,38 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   confirmPurchase(paymentMethod: 'PIX' | 'LINK' = 'LINK') {
     if (this.selectedProduct && this.userName) {
-      this.isLoading = true;
+        this.isLoading = true;
 
-      const payload = {
-        productId: this.selectedProduct.id,
-        name: this.userName,
-        quotas: this.selectedProduct.quotaValue ? this.selectedQuotas : 1,
-      };
+        const payload = {
+            productId: this.selectedProduct.id,
+            name: this.userName,
+            quotas: this.selectedProduct.quotaValue ? this.selectedQuotas : 1,
+        };
 
-      if (this.selectedProduct.quotaValue) {
-        this.selectedProduct.totalQuotas -= this.selectedQuotas;
-        if (this.selectedProduct.totalQuotas <= 0) {
-          this.selectedProduct.totalQuotas = 0;
-          this.selectedProduct.quantity = 0;
-        }
-      } else {
-        this.selectedProduct.quantity -= this.selectedQuotas;
-        if (this.selectedProduct.quantity <= 0) {
-          this.selectedProduct.quantity = 0;
-        }
-      }
+        this.productService.confirmPurchase(payload).subscribe(
+            () => {
+                alert(`Compra confirmada via ${paymentMethod}! Obrigado, ${this.userName}.`);
 
-      this.productService.confirmPurchase(payload).subscribe(
-        () => {
-          alert(`Compra confirmada via ${paymentMethod}! Obrigado, ${this.userName}.`);
-          this.loadProducts();
-          this.isLoading = false;
-          this.confirmingPurchase = false;
-          this.showingPixModal = false;
-          this.userName = '';
-          this.selectedQuotas = 1;
-          this.closeModal();
-        },
-        (error) => {
-          console.error('Erro ao confirmar compra:', error);
-          alert('Ocorreu um erro ao confirmar a compra.');
-          this.isLoading = false;
-        }
-      );
+                // Recarregar os produtos diretamente da API
+                this.loadProducts();
+
+                this.isLoading = false;
+                this.confirmingPurchase = false;
+                this.showingPixModal = false;
+                this.userName = '';
+                this.selectedQuotas = 1;
+                this.closeModal();
+            },
+            (error) => {
+                console.error('Erro ao confirmar compra:', error);
+                alert('Ocorreu um erro ao confirmar a compra.');
+                this.isLoading = false;
+            }
+        );
     } else {
-      alert('Por favor, preencha seu nome para confirmar a compra.');
+        alert('Por favor, preencha seu nome para confirmar a compra.');
     }
-  }
+}
 
   copyPixCode() {
     const pixCode = `85988693542`;
