@@ -52,8 +52,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   loadProducts() {
-    this.isLoading = true;
     this.products = [];
+    this.isLoading = true;
     this.productService.getProducts().subscribe((data) => {
         this.products = data;
         this.sortProducts();
